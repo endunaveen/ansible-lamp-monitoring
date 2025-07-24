@@ -1,0 +1,12 @@
+- name: Install Apache and PHP
+  hosts: web
+  become: true
+  roles:
+    - apache
+    - php
+
+- name: Install MySQL
+  hosts: db
+  become: true
+  roles:
+    - mysql
