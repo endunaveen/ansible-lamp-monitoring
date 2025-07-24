@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git(
+                    url: 'https://github.com/endunaveen/ansible-lamp-monitoring.git',
+                    credentialsId: 'github-creds'
+                )
+            }
+        }
+        stage('Install LAMP') {
+            steps {
+                sh '''
+          export ANSIBLE_HOST_KEY_CHECKING=False
+          ansible-playbook -i inventory/hosts.ini playbooks/lamp.yml
+        '''
+            }
+        }
+        stage('Deploy App') {
+            steps {
+                sh 'ansible-playbook -i inventory/hosts.ini playbooks/app_deploy.yaml'
+            }
+        }
+        stage('Configure Monitoring') {
+            steps {
+                sh 'ansible-playbook -i inventory/hosts.ini playbooks/monitoring.yml'
+            }
+        }
+    }
+}
